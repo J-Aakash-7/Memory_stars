@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedPulse — Smart Healthcare Delivered</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --bg2: #0e1628;
+    --surface: #131d35;
+    --surface2: #1a2540;
+    --accent: #00e5a0;
+    --accent2: #00b3ff;
+    --accent3: #ff6b6b;
+    --text: #e8edf8;
+    --text-muted: #7a8aaa;
+    --border: rgba(255,255,255,0.07);
+    --glow: 0 0 40px rgba(0,229,160,0.15);
+    --glow2: 0 0 40px rgba(0,179,255,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(0,229,160,0.5);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease-out, width 0.2s, height 0.2s;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  /* ========== NAV ========== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(10,15,30,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    animation: slideDown 0.6s ease both;
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo span { color: var(--text); -webkit-text-fill-color: var(--text); }
+
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1.5px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: none;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .btn-ghost:hover {
+    border-color: rgba(0,229,160,0.4);
+    color: var(--accent);
+    background: rgba(0,229,160,0.05);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #00c48a);
+    border: none;
+    color: #0a0f1e;
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(0,229,160,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(0,229,160,0.5);
+  }
+
+  .cart-btn {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: none;
+    transition: all 0.25s;
+  }
+  .cart-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .cart-badge {
+    position: absolute; top: -5px; right: -5px;
+    background: var(--accent3);
+    color: white; width: 18px; height: 18px;
+    border-radius: 50%; font-size: 0.65rem;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+
+  /* ========== HERO ========== */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 140px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 70% 50%, rgba(0,179,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 20% 80%, rgba(0,229,160,0.06) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  }
+
+  .hero-left { position: relative; z-index: 1; animation: fadeUp 0.8s 0.3s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .hero-badge::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .hero h1 .line2 {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 460px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 60px; }
+
+  .hero-stats {
+    display: flex; gap: 40px;
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    display: block;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  /* HERO RIGHT - Visual */
+  .hero-right {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .hero-visual {
+    width: 460px; height: 460px;
+    position: relative;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(1px);
+    animation: float 6s ease-in-out infinite;
+  }
+  .orb-main {
+    width: 300px; height: 300px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at 30% 30%, rgba(0,229,160,0.15), rgba(0,179,255,0.1) 50%, transparent 70%);
+    border: 1px solid rgba(0,229,160,0.2);
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(-50%,-50%) translateY(0); }
+    50% { transform: translate(-50%,-50%) translateY(-15px); }
+  }
+
+  .med-card-float {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    animation: floatCard 4s ease-in-out infinite;
+  }
+  .med-card-float:nth-child(2) { top: 10px; right: 10px; animation-delay: -1s; }
+  .med-card-float:nth-child(3) { bottom: 60px; left: 0; animation-delay: -2s; }
+  .med-card-float:nth-child(4) { top: 50%; right: -20px; animation-delay: -3s; }
+
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+  }
+
+  .float-icon { font-size: 1.8rem; margin-bottom: 4px; }
+  .float-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+  .float-val { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); }
+
+  .ring {
+    position: absolute; border-radius: 50%;
+    border: 1px dashed rgba(0,229,160,0.1);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: spin 20s linear infinite;
+  }
+  .ring-1 { width: 380px; height: 380px; }
+  .ring-2 { width: 440px; height: 440px; animation-direction: reverse; animation-duration: 30s; border-color: rgba(0,179,255,0.08); }
+  @keyframes spin { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  /* ========== SEARCH BAR ========== */
+  .search-section {
+    padding: 0 60px 80px;
+    position: relative; z-index: 2;
+  }
+  .search-wrap {
+    max-width: 760px; margin: 0 auto;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 20px 70px 20px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .search-wrap input:focus {
+    border-color: rgba(0,229,160,0.4);
+    box-shadow: var(--glow);
+  }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+  .search-btn {
+    position: absolute; right: 8px; top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, var(--accent), #00c48a);
+    border: none; border-radius: 12px;
+    width: 46px; height: 46px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: none;
+    transition: all 0.25s;
+  }
+  .search-btn:hover { transform: translateY(-50%) scale(1.05); box-shadow: 0 0 20px rgba(0,229,160,0.4); }
+  .search-btn svg { stroke: #0a0f1e; }
+  .search-tags {
+    display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tag {
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .tag:hover { border-color: rgba(0,229,160,0.3); color: var(--accent); background: rgba(0,229,160,0.05); }
+
+  /* ========== SECTION HEADERS ========== */
+  .section { padding: 80px 60px; position: relative; }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .see-all {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    transition: color 0.2s;
+  }
+  .see-all:hover { color: var(--accent); }
+
+  /* ========== CATEGORIES ========== */
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  .cat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(0,229,160,0.03));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .cat-card:hover { transform: translateY(-6px); border-color: rgba(0,229,160,0.25); box-shadow: var(--glow); }
+  .cat-card:hover::before { opacity: 1; }
+  .cat-emoji { font-size: 2.2rem; margin-bottom: 12px; display: block; }
+  .cat-name { font-size: 0.82rem; font-weight: 500; color: var(--text-muted); }
+  .cat-card:hover .cat-name { color: var(--text); }
+  .cat-count { font-size: 0.7rem; color: var(--accent); margin-top: 4px; font-weight: 600; }
+
+  /* ========== PRODUCT CARDS ========== */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .prod-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    overflow: hidden;
+    cursor: none;
+    transition: all 0.35s ease;
+    position: relative;
+  }
+  .prod-card:hover { transform: translateY(-8px); border-color: rgba(0,229,160,0.2); box-shadow: 0 30px 60px rgba(0,0,0,0.4), var(--glow); }
+
+  .prod-img {
+    height: 180px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .prod-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, var(--surface));
+  }
+
+  .prod-badge {
+    position: absolute; top: 12px; left: 12px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    z-index: 1;
+  }
+  .badge-rx { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
+  .badge-otc { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); }
+  .badge-sale { background: rgba(255,165,0,0.12); color: #ffaa00; border: 1px solid rgba(255,165,0,0.3); }
+  .badge-new { background: rgba(0,179,255,0.12); color: var(--accent2); border: 1px solid rgba(0,179,255,0.25); }
+
+  .wishlist-btn {
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px;
+    background: rgba(10,15,30,0.8);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: none; z-index: 1;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+  .wishlist-btn:hover { background: rgba(255,107,107,0.2); border-color: var(--accent3); }
+
+  .prod-body { padding: 20px; }
+  .prod-cat { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .prod-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+  .prod-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+
+  .prod-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .prod-price { }
+  .price-main { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+  .price-old { font-size: 0.8rem; color: var(--text-muted); text-decoration: line-through; margin-left: 6px; }
+
+  .add-btn {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), #00c48a);
+    border: none; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: none;
+    transition: all 0.25s;
+    color: #0a0f1e;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .add-btn:hover { transform: scale(1.12); box-shadow: 0 0 20px rgba(0,229,160,0.5); }
+
+  .stars {
+    display: flex; gap: 2px; margin-bottom: 12px;
+    font-size: 0.72rem; color: #ffaa00;
+  }
+  .stars span { color: var(--text-muted); margin-left: 4px; font-family: 'DM Sans'; font-size: 0.72rem; }
+
+  /* ========== BANNER ========== */
+  .promo-banner {
+    margin: 0 60px;
+    border-radius: 28px;
+    padding: 60px 70px;
+    background: linear-gradient(135deg, #0d2a3a 0%, #0a1f1a 50%, #0d1f2a 100%);
+    border: 1px solid rgba(0,229,160,0.15);
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .promo-banner::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,229,160,0.12), transparent 70%);
+    right: -100px; top: -100px;
+    border-radius: 50%;
+  }
+  .promo-banner::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,179,255,0.08), transparent 70%);
+    left: 200px; bottom: -100px;
+    border-radius: 50%;
+  }
+  .promo-text { position: relative; z-index: 1; }
+  .promo-kicker { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .promo-h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem; font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .promo-h2 span { color: var(--accent); }
+  .promo-sub { color: var(--text-muted); max-width: 400px; line-height: 1.6; margin-bottom: 30px; font-size: 0.95rem; }
+  .promo-visual { font-size: 8rem; position: relative; z-index: 1; filter: drop-shadow(0 0 30px rgba(0,229,160,0.3)); animation: float 4s ease-in-out infinite; }
+
+  /* ========== FEATURES ========== */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .feat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    transition: all 0.3s;
+  }
+  .feat-card:hover { border-color: rgba(0,229,160,0.2); transform: translateY(-4px); }
+  .feat-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  .fi-green { background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); }
+  .fi-blue { background: rgba(0,179,255,0.1); border: 1px solid rgba(0,179,255,0.2); }
+  .fi-orange { background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.2); }
+  .fi-red { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.2); }
+  .feat-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+  .feat-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ========== PRESCRIPTION UPLOAD ========== */
+  .rx-section {
+    padding: 80px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .rx-left h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 700;
+    letter-spacing: -0.02em; margin-bottom: 18px;
+  }
+  .rx-left p { color: var(--text-muted); line-height: 1.7; margin-bottom: 32px; }
+  .rx-steps { display: flex; flex-direction: column; gap: 20px; }
+  .rx-step { display: flex; gap: 16px; align-items: flex-start; }
+  .step-num {
+    width: 32px; height: 32px; min-width: 32px;
+    background: linear-gradient(135deg, var(--accent), #00c48a);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+    color: #0a0f1e;
+  }
+  .step-text h4 { font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; }
+  .step-text p { font-size: 0.82rem; color: var(--text-muted); }
+
+  .rx-upload {
+    background: var(--surface);
+    border: 2px dashed rgba(0,229,160,0.2);
+    border-radius: 24px;
+    padding: 60px 40px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .rx-upload:hover {
+    border-color: rgba(0,229,160,0.5);
+    background: rgba(0,229,160,0.03);
+  }
+  .upload-icon { font-size: 3.5rem; margin-bottom: 20px; }
+  .rx-upload h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+  .rx-upload p { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 28px; }
+
+  /* ========== TESTIMONIALS ========== */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .testi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    transition: all 0.3s;
+  }
+  .testi-card:hover { transform: translateY(-4px); border-color: rgba(0,229,160,0.15); }
+  .testi-quote { font-size: 1.5rem; color: var(--accent); opacity: 0.5; margin-bottom: 16px; font-family: serif; }
+  .testi-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 24px; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .author-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; color: #0a0f1e;
+  }
+  .author-name { font-weight: 600; font-size: 0.875rem; }
+  .author-loc { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 60px 60px 30px;
+    margin-top: 80px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 50px;
+  }
+  .footer-brand p { color: var(--text-muted); font-size: 0.875rem; line-height: 1.7; margin: 16px 0 24px; }
+  .footer-socials { display: flex; gap: 10px; }
+  .social-btn {
+    width: 36px; height: 36px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; cursor: none;
+    transition: all 0.2s;
+  }
+  .social-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .footer-col h4 { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 20px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom p { color: var(--text-muted); font-size: 0.8rem; }
+  .footer-trust { display: flex; gap: 16px; }
+  .trust-badge {
+    padding: 5px 12px;
+    background: rgba(0,229,160,0.06);
+    border: 1px solid rgba(0,229,160,0.12);
+    border-radius: 8px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ========== TOAST ========== */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px;
+    background: var(--surface);
+    border: 1px solid rgba(0,229,160,0.3);
+    border-radius: 14px;
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.875rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transform: translateX(120%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2000;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-icon { font-size: 1.2rem; }
+  .toast-text strong { display: block; margin-bottom: 2px; color: var(--accent); }
+  .toast-text span { color: var(--text-muted); font-size: 0.78rem; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,160,0.3); }
+
+  /* ANIMATIONS ON SCROLL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="toast-icon">🛒</div>
+  <div class="toast-text">
+    <strong>Added to Cart!</strong>
+    <span>Item added successfully</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Med<span>Pulse</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Medicines</a></li>
+    <li><a href="#">Lab Tests</a></li>
+    <li><a href="#">Health Blog</a></li>
+    <li><a href="#">Offers</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="#" class="btn btn-ghost">Sign In</a>
+    <a href="#" class="btn btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Register
+    </a>
+    <div class="cart-btn" onclick="showToast()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <div class="cart-badge">3</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-left">
+    <div class="hero-badge">✦ India's Trusted Health Partner</div>
+    <h1>
+      Your Health,<br>
+      <span class="line2">Delivered Fast</span><br>
+      & Affordably
+    </h1>
+    <p>Get genuine medicines, wellness products, and health essentials delivered to your doorstep in under 30 minutes. Verified by licensed pharmacists.</p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn-primary" style="font-size:1rem; padding:14px 32px;">
+        Shop Now
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 14 0M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#" class="btn btn-ghost" style="font-size:1rem; padding:14px 32px;">Upload Prescription</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">50K<span>+</span></span>
+        <span class="stat-label">Products</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">2M<span>+</span></span>
+        <span class="stat-label">Happy Customers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">30<span>min</span></span>
+        <span class="stat-label">Avg Delivery</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="orb orb-main"></div>
+
+      <!-- Floating cards -->
+      <div class="med-card-float" style="top:30px; right:20px;">
+        <div class="float-icon">💊</div>
+        <div class="float-label">Today's Orders</div>
+        <div class="float-val">1,248</div>
+      </div>
+      <div class="med-card-float" style="bottom:60px; left:0;">
+        <div class="float-icon">⚡</div>
+        <div class="float-label">Delivery Time</div>
+        <div class="float-val">28 min</div>
+      </div>
+      <div class="med-card-float" style="top:50%; right:-10px; transform:translateY(-50%);">
+        <div class="float-icon">🩺</div>
+        <div class="float-label">Pharmacists Online</div>
+        <div class="float-val">24/7</div>
+      </div>
+      <div class="med-card-float" style="top:55%; left:30px;">
+        <div class="float-icon">🏆</div>
+        <div class="float-label">Authenticity</div>
+        <div class="float-val">100%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<div class="search-section">
+  <div class="search-wrap">
+    <input type="text" placeholder="Search medicines, vitamins, health products…">
+    <button class="search-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+  </div>
+  <div class="search-tags">
+    <span class="tag">Paracetamol</span>
+    <span class="tag">Vitamin D3</span>
+    <span class="tag">Omega 3</span>
+    <span class="tag">Blood Pressure</span>
+    <span class="tag">Diabetes Care</span>
+    <span class="tag">Protein Powder</span>
+    <span class="tag">Hand Sanitizer</span>
+    <span class="tag">First Aid</span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="section reveal">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Browse By Category</div>
+      <h2 class="section-title">Everything for<br>Your Wellbeing</h2>
+    </div>
+    <a href="#" class="see-all">View All Categories →</a>
+  </div>
+  <div class="categories-grid">
+    <div class="cat-card">
+      <span class="cat-emoji">💊</span>
+      <div class="cat-name">Medicines</div>
+      <div class="cat-count">12,000+ items</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-emoji">🧴</span>
+      <div class="cat-name">Skincare</div>
+      <div class="cat-count">3,500+ items</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-emoji">🦷</span>
+      <div class="cat-name">Oral Care</div>
+      <div class="cat-count">800+ items</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-emoji">🍼</span>
+      <div class="cat-name">Baby Care</div>
+      <div class="cat-count">1,200+ items</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-emoji">💪</span>
+      <div class="cat-name">Fitness</div>
+      <div class="cat-count">2,100+ items</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-emoji">🧠</span>
+      <div class="cat-name">Mental Health</div>
+      <div class="cat-count">600+ items</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section reveal">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Featured Products</div>
+      <h2 class="section-title">Best Sellers<br>This Week</h2>
+    </div>
+    <a href="#" class="see-all">View All Products →</a>
+  </div>
+  <div class="products-grid">
+    <!-- Card 1 -->
+    <div class="prod-card">
+      <div class="prod-img">
+        <span class="prod-badge badge-otc">OTC</span>
+        <div class="wishlist-btn">♡</div>
+        💊
+      </div>
+      <div class="prod-body">
+        <div class="prod-cat">Pain Relief</div>
+        <div class="prod-name">Crocin Advance 500mg</div>
+        <div class="stars">★★★★★ <span>(2.4k)</span></div>
+        <div class="prod-desc">Fast acting paracetamol for pain, fever & headache relief.</div>
+        <div class="prod-footer">
+          <div class="prod-price">
+            <span class="price-main">₹52</span>
+            <span class="price-old">₹65</span>
+          </div>
+          <button class="add-btn" onclick="showToast()">+</button>
+        </div>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="prod-card">
+      <div class="prod-img" style="background: linear-gradient(135deg, var(--surface2), #1a2540);">
+        <span class="prod-badge badge-new">New</span>
+        <div class="wishlist-btn">♡</div>
+        🌿
+      </div>
+      <div class="prod-body">
+        <div class="prod-cat">Immunity</div>
+        <div class="prod-name">Chyawanprash Gold 1kg</div>
+        <div class="stars">★★★★☆ <span>(980)</span></div>
+        <div class="prod-desc">Ayurvedic immunity booster with 41 natural herbs.</div>
+        <div class="prod-footer">
+          <div class="prod-price">
+            <span class="price-main">₹249</span>
+            <span class="price-old">₹320</span>
+          </div>
+          <button class="add-btn" onclick="showToast()">+</button>
+        </div>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="prod-card">
+      <div class="prod-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+        <span class="prod-badge badge-sale">Sale</span>
+        <div class="wishlist-btn">♡</div>
+        ☀️
+      </div>
+      <div class="prod-body">
+        <div class="prod-cat">Vitamins</div>
+        <div class="prod-name">Vitamin D3 + K2 Combo</div>
+        <div class="stars">★★★★★ <span>(3.1k)</span></div>
+        <div class="prod-desc">High potency D3 with K2 for bone & immune support.</div>
+        <div class="prod-footer">
+          <div class="prod-price">
+            <span class="price-main">₹380</span>
+            <span class="price-old">₹499</span>
+          </div>
+          <button class="add-btn" onclick="showToast()">+</button>
+        </div>
+      </div>
+    </div>
+    <!-- Card 4 -->
+    <div class="prod-card">
+      <div class="prod-img" style="background: linear-gradient(135deg, #1f1a2e, #2a1a2e);">
+        <span class="prod-badge badge-rx">Rx</span>
+        <div class="wishlist-btn">♡</div>
+        🩸
+      </div>
+      <div class="prod-body">
+        <div class="prod-cat">Diabetes</div>
+        <div class="prod-name">Glucometer Pro Kit</div>
+        <div class="stars">★★★★☆ <span>(1.5k)</span></div>
+        <div class="prod-desc">Smart glucose monitor with app connectivity & 50 strips.</div>
+        <div class="prod-footer">
+          <div class="prod-price">
+            <span class="price-main">₹1,299</span>
+            <span class="price-old">₹1,800</span>
+          </div>
+          <button class="add-btn" onclick="showToast()">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<div class="promo-banner reveal">
+  <div class="promo-text">
+    <div class="promo-kicker">✦ Limited Time Offer</div>
+    <h2 class="promo-h2">Get <span>30% OFF</span><br>on Lab Tests at Home</h2>
+    <p class="promo-sub">Book full body checkups, CBC, thyroid, sugar tests — certified labs, free sample collection from your home, reports in 6 hours.</p>
+    <a href="#" class="btn btn-primary" style="font-size: 0.95rem; padding: 14px 30px;">
+      Book a Test Now
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 14 0M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+  <div class="promo-visual">🔬</div>
+</div>
+
+<!-- FEATURES -->
+<section class="section reveal">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Why Choose Us</div>
+      <h2 class="section-title">Healthcare You<br>Can Trust</h2>
+    </div>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon fi-green">⚡</div>
+      <div class="feat-title">Express Delivery</div>
+      <div class="feat-desc">Get medicines at your door in under 30 minutes within city limits. No minimum order.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-blue">🔒</div>
+      <div class="feat-title">100% Genuine Meds</div>
+      <div class="feat-desc">Every product sourced directly from licensed manufacturers & authorized distributors.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-orange">👨‍⚕️</div>
+      <div class="feat-title">24/7 Pharmacist Help</div>
+      <div class="feat-desc">Chat with certified pharmacists anytime. Get dosage guidance, drug interactions & more.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-red">💰</div>
+      <div class="feat-title">Best Price Guarantee</div>
+      <div class="feat-desc">Save up to 70% on medicines. Price match guarantee — we'll beat any verified lower price.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRESCRIPTION UPLOAD -->
+<section class="rx-section reveal">
+  <div class="rx-left">
+    <div class="section-label">Prescription Upload</div>
+    <h2>Order with Your<br>Prescription Easily</h2>
+    <p>Our licensed pharmacists review every prescription within minutes. Safe, secure, and fully compliant with pharmacy regulations.</p>
+    <div class="rx-steps">
+      <div class="rx-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h4>Upload Your Prescription</h4>
+          <p>Take a photo or upload a PDF of your doctor's prescription</p>
+        </div>
+      </div>
+      <div class="rx-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h4>Pharmacist Review</h4>
+          <p>Our certified pharmacist verifies and processes your order</p>
+        </div>
+      </div>
+      <div class="rx-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h4>Fast Delivery</h4>
+          <p>Medicines packed and dispatched to your door within 30 minutes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rx-upload" onclick="alert('Upload feature coming soon!')">
+    <div class="upload-icon">📋</div>
+    <h3>Upload Prescription</h3>
+    <p>Drag & drop your prescription here<br>or click to browse files</p>
+    <a href="#" class="btn btn-primary" style="font-size:0.9rem; padding:12px 28px;">Choose File</a>
+    <p style="margin-top:16px; font-size:0.75rem; color: var(--text-muted);">Supports JPG, PNG, PDF • Max 5MB</p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section reveal">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Customer Love</div>
+      <h2 class="section-title">What Our Customers<br>Are Saying</h2>
+    </div>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Ordered medicines at midnight and received them in 25 minutes. The pharmacist helped me with the right dosage too. Truly a lifesaver!</p>
+      <div class="testi-author">
+        <div class="author-avatar">P</div>
+        <div>
+          <div class="author-name">Priya Ramesh</div>
+          <div class="author-loc">⭐⭐⭐⭐⭐ · Chennai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Finally a medical store that's actually cheaper than offline! 40% savings on my monthly diabetes medicines. The home delivery is a blessing.</p>
+      <div class="testi-author">
+        <div class="author-avatar" style="background: linear-gradient(135deg, var(--accent2), #006bb3);">K</div>
+        <div>
+          <div class="author-name">Karthik Subramanian</div>
+          <div class="author-loc">⭐⭐⭐⭐⭐ · Coimbatore</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">The app is so intuitive. I upload my prescription and everything is handled. Authentic products and fast delivery — highly recommended!</p>
+      <div class="testi-author">
+        <div class="author-avatar" style="background: linear-gradient(135deg, #ff6b6b, #ff4040);">A</div>
+        <div>
+          <div class="author-name">Anitha Krishnan</div>
+          <div class="author-loc">⭐⭐⭐⭐⭐ · Bangalore</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size:1.4rem;">Med<span>Pulse</span></div>
+      <p>India's most trusted online pharmacy. Delivering genuine medicines, health products & lab tests to 500+ cities across India.</p>
+      <div class="footer-socials">
+        <div class="social-btn">𝕏</div>
+        <div class="social-btn">in</div>
+        <div class="social-btn">f</div>
+        <div class="social-btn">▶</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul class="footer-links">
+        <li><a href="#">Order Medicines</a></li>
+        <li><a href="#">Book Lab Tests</a></li>
+        <li><a href="#">Health Records</a></li>
+        <li><a href="#">Doctor Consult</a></li>
+        <li><a href="#">Health Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul class="footer-links">
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Returns & Refunds</a></li>
+        <li><a href="#">FAQs</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Pharmacist Chat</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul class="footer-links">
+        <li><a href="#">About MedPulse</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Use</a></li>
+        <li><a href="#">Investor Relations</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MedPulse Pharma Pvt. Ltd. All rights reserved. Licensed Pharmacy #DL-MH-123456</p>
+    <div class="footer-trust">
+      <div class="trust-badge">✓ ISO Certified</div>
+      <div class="trust-badge">✓ CDSCO Approved</div>
+      <div class="trust-badge">🔒 SSL Secured</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .btn, .cat-card, .prod-card, .tag, .cart-btn, .add-btn, .rx-upload, .social-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '50px';
+      ring.style.height = '50px';
+      ring.style.borderColor = 'rgba(0,229,160,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(0,229,160,0.5)';
+    });
+  });
+
+  // Toast
+  function showToast() {
+    const toast = document.getElementById('toast');
+    const items = ['Crocin Advance 500mg', 'Vitamin D3 + K2', 'Glucometer Pro Kit', 'Chyawanprash Gold'];
+    const item = items[Math.floor(Math.random() * items.length)];
+    toast.querySelector('strong').textContent = 'Added to Cart!';
+    toast.querySelector('span').textContent = item + ' added';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  // Reveal on Scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Search tags click
+  document.querySelectorAll('.tag').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelector('.search-wrap input').value = t.textContent;
+    });
+  });
+</script>
+</body>
+</html>
