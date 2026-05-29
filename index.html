@@ -7,6 +7,919 @@
 <title>Memory in the Stars ✨</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Bella Designs</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+
+<style>
+
+:root{
+  --bg:#0a0a0a;
+  --surface:#111111;
+  --surface2:#181818;
+  --accent:#b5ff47;
+  --text:#f5f5f5;
+  --muted:#8b8b8b;
+  --border:#232323;
+  --wa:#25D366;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* CURSOR */
+
+.cursor{
+  width:12px;
+  height:12px;
+  background:var(--accent);
+  border-radius:50%;
+  position:fixed;
+  top:0;
+  left:0;
+  pointer-events:none;
+  z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s;
+  mix-blend-mode:difference;
+}
+
+.cursor-ring{
+  width:38px;
+  height:38px;
+  border:1px solid var(--accent);
+  border-radius:50%;
+  position:fixed;
+  top:0;
+  left:0;
+  pointer-events:none;
+  z-index:9998;
+  transform:translate(-50%,-50%);
+  opacity:0.5;
+}
+
+.cursor.hover{
+  width:20px;
+  height:20px;
+}
+
+.cursor-ring.hover{
+  width:60px;
+  height:60px;
+  opacity:0.25;
+}
+
+/* NAVBAR */
+
+nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+  padding:18px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  backdrop-filter:blur(14px);
+  background:rgba(10,10,10,0.75);
+  border-bottom:1px solid var(--border);
+}
+
+.logo{
+  font-family:'Syne',sans-serif;
+  font-size:1.3rem;
+  font-weight:800;
+  color:white;
+  text-decoration:none;
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.nav-links{
+  display:flex;
+  gap:32px;
+  align-items:center;
+}
+
+.nav-links a{
+  color:var(--muted);
+  text-decoration:none;
+  transition:.3s;
+}
+
+.nav-links a:hover{
+  color:white;
+}
+
+.btn-nav{
+  background:var(--accent);
+  color:black !important;
+  padding:10px 22px;
+  border-radius:100px;
+  font-weight:700;
+}
+
+/* HERO */
+
+#hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  padding:140px 6% 100px;
+}
+
+.hero-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+  linear-gradient(rgba(181,255,71,0.04) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(181,255,71,0.04) 1px, transparent 1px);
+  background-size:70px 70px;
+}
+
+.hero-glow{
+  width:700px;
+  height:700px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(181,255,71,0.12),transparent 70%);
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  max-width:900px;
+}
+
+.hero-badge{
+  display:inline-block;
+  background:rgba(181,255,71,0.08);
+  border:1px solid rgba(181,255,71,0.15);
+  color:var(--accent);
+  padding:10px 18px;
+  border-radius:100px;
+  font-size:.75rem;
+  letter-spacing:.08em;
+  margin-bottom:30px;
+}
+
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(3rem,8vw,6.5rem);
+  line-height:1;
+  font-weight:800;
+}
+
+.hero-title span{
+  color:var(--accent);
+}
+
+.hero-sub{
+  color:var(--muted);
+  margin:30px auto;
+  max-width:700px;
+  line-height:1.8;
+}
+
+.hero-actions{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:40px;
+}
+
+.btn-primary{
+  background:var(--accent);
+  color:black;
+  padding:15px 32px;
+  border-radius:100px;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.btn-ghost{
+  border:1px solid var(--border);
+  color:white;
+  padding:15px 32px;
+  border-radius:100px;
+  text-decoration:none;
+}
+
+/* SECTIONS */
+
+section{
+  padding:100px 6%;
+}
+
+.section-tag{
+  color:var(--accent);
+  font-size:.75rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.2rem,5vw,4rem);
+  margin-top:16px;
+}
+
+/* TEMPLATE GRID */
+
+.templates-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:25px;
+  margin-top:60px;
+}
+
+.template-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:22px;
+  overflow:hidden;
+  transition:.35s;
+}
+
+.template-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(181,255,71,0.35);
+}
+
+/* 4 IMAGE GALLERY */
+
+.template-gallery{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:140px 140px;
+  gap:6px;
+  padding:6px;
+}
+
+.template-gallery img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.4s;
+}
+
+.template-gallery img:hover{
+  transform:scale(1.04);
+  filter:brightness(1.08);
+}
+
+.template-info{
+  padding:22px;
+}
+
+.template-info h3{
+  font-family:'Syne',sans-serif;
+  margin-bottom:10px;
+}
+
+.template-info p{
+  color:var(--muted);
+  line-height:1.7;
+}
+
+/* PROCESS */
+
+#how{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:22px;
+  margin-top:60px;
+}
+
+.step{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:35px;
+}
+
+.step-icon{
+  font-size:2rem;
+  margin-bottom:18px;
+}
+
+.step h3{
+  font-family:'Syne',sans-serif;
+  margin-bottom:10px;
+}
+
+.step p{
+  color:var(--muted);
+  line-height:1.7;
+}
+
+/* CONTACT */
+
+.contact-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  margin-top:60px;
+}
+
+.contact-info h3{
+  font-family:'Syne',sans-serif;
+  font-size:2rem;
+  margin-bottom:20px;
+}
+
+.contact-info p{
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.contact-list{
+  margin-top:40px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.contact-item{
+  color:var(--muted);
+}
+
+.form-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:35px;
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:8px;
+  color:var(--muted);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 16px;
+  color:white;
+  outline:none;
+}
+
+.form-group textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.btn-wa{
+  width:100%;
+  border:none;
+  background:var(--wa);
+  color:white;
+  padding:16px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* FOOTER */
+
+footer{
+  border-top:1px solid var(--border);
+  padding:40px 6%;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* IMAGE MODAL */
+
+.image-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.96);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  transition:.35s;
+  z-index:5000;
+  padding:40px;
+}
+
+.image-modal.active{
+  opacity:1;
+  visibility:visible;
+}
+
+.image-modal img{
+  max-width:95%;
+  max-height:95%;
+  border-radius:18px;
+  animation:zoomIn .35s ease;
+}
+
+.close-modal{
+  position:absolute;
+  top:25px;
+  right:35px;
+  font-size:2rem;
+  cursor:pointer;
+  color:white;
+}
+
+@keyframes zoomIn{
+
+  from{
+    transform:scale(.8);
+    opacity:0;
+  }
+
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+
+}
+
+@media(max-width:850px){
+
+  .contact-wrap{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:700px){
+
+  .cursor,
+  .cursor-ring{
+    display:none;
+  }
+
+  .nav-links{
+    display:none;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+
+  <a href="#" class="logo">
+    Bella <span>Designs</span>
+  </a>
+
+  <div class="nav-links">
+    <a href="#templates">Templates</a>
+    <a href="#how">Process</a>
+    <a href="#contact" class="btn-nav">Get Started</a>
+  </div>
+
+</nav>
+
+<section id="hero">
+
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-content">
+
+    <div class="hero-badge">
+      Premium Websites Delivered Within 24 Hours
+    </div>
+
+    <h1 class="hero-title">
+      Modern Websites For <span>Growing Businesses</span>
+    </h1>
+
+    <p class="hero-sub">
+      Bella Designs creates modern websites for restaurants,
+      bakeries, salons, boutiques and local stores.
+    </p>
+
+    <div class="hero-actions">
+
+      <a href="#contact" class="btn-primary">
+        Order Website
+      </a>
+
+      <a href="#templates" class="btn-ghost">
+        View Templates
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section id="templates">
+
+  <span class="section-tag">Templates</span>
+
+  <h2 class="section-title">
+    Business Website Designs
+  </h2>
+
+  <div class="templates-grid">
+
+    <!-- RESTAURANT -->
+
+    <div class="template-card">
+
+      <div class="template-gallery">
+
+        <img src="images/restaurant1.jpg" class="preview-img">
+        <img src="images/restaurant2.jpg" class="preview-img">
+        <img src="images/restaurant3.jpg" class="preview-img">
+        <img src="images/restaurant4.jpg" class="preview-img">
+
+      </div>
+
+      <div class="template-info">
+
+        <h3>Restaurant Website</h3>
+
+        <p>
+          Food menu, WhatsApp ordering and modern customer experience.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- BAKERY -->
+
+    <div class="template-card">
+
+      <div class="template-gallery">
+
+        <img src="images/bakery1.jpg" class="preview-img">
+        <img src="images/bakery2.jpg" class="preview-img">
+        <img src="images/bakery3.jpg" class="preview-img">
+        <img src="images/bakery4.jpg" class="preview-img">
+
+      </div>
+
+      <div class="template-info">
+
+        <h3>Bakery Website</h3>
+
+        <p>
+          Premium cake showcase and elegant online ordering system.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- SALON -->
+
+    <div class="template-card">
+
+      <div class="template-gallery">
+
+        <img src="images/salon1.jpg" class="preview-img">
+        <img src="images/salon2.jpg" class="preview-img">
+        <img src="images/salon3.jpg" class="preview-img">
+        <img src="images/salon4.jpg" class="preview-img">
+
+      </div>
+
+      <div class="template-info">
+
+        <h3>Salon Website</h3>
+
+        <p>
+          Stylish booking and service presentation for beauty brands.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section id="how">
+
+  <span class="section-tag">Process</span>
+
+  <h2 class="section-title">
+    How It Works
+  </h2>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-icon">💬</div>
+      <h3>Contact</h3>
+      <p>
+        Send your requirements through WhatsApp.
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">🎨</div>
+      <h3>Choose Design</h3>
+      <p>
+        Select the design style for your business.
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">⚡</div>
+      <h3>Development</h3>
+      <p>
+        We build your responsive modern website.
+      </p>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">🚀</div>
+      <h3>Launch</h3>
+      <p>
+        Your website goes live for customers.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<section id="contact">
+
+  <span class="section-tag">Contact</span>
+
+  <h2 class="section-title">
+    Let's Build Your Website
+  </h2>
+
+  <div class="contact-wrap">
+
+    <div class="contact-info">
+
+      <h3>
+        Professional websites for local businesses.
+      </h3>
+
+      <p>
+        Bella Designs helps businesses grow with premium websites.
+      </p>
+
+      <div class="contact-list">
+
+        <div class="contact-item">
+          📍 Tiruppur, Tamil Nadu
+        </div>
+
+        <div class="contact-item">
+          💬 WhatsApp: +91 81226 68602
+        </div>
+
+        <div class="contact-item">
+          ⚡ Fast Response
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="form-card">
+
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="name">
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phone">
+      </div>
+
+      <div class="form-group">
+        <label>Business Name</label>
+        <input type="text" id="business">
+      </div>
+
+      <div class="form-group">
+
+        <label>Requirements</label>
+
+        <textarea id="notes"></textarea>
+
+      </div>
+
+      <button class="btn-wa" onclick="sendWhatsApp()">
+        Send via WhatsApp
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Bella Designs · Built in Tamil Nadu
+</footer>
+
+<!-- IMAGE MODAL -->
+
+<div class="image-modal" id="imageModal">
+
+  <span class="close-modal" id="closeModal">✕</span>
+
+  <img id="modalImage" src="" alt="Preview">
+
+</div>
+
+<script>
+
+/* CURSOR */
+
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+
+let mouseX = 0;
+let mouseY = 0;
+let ringX = 0;
+let ringY = 0;
+
+document.addEventListener('mousemove', e => {
+
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+
+});
+
+function animateRing(){
+
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+
+  ring.style.left = ringX + 'px';
+  ring.style.top = ringY + 'px';
+
+  requestAnimationFrame(animateRing);
+
+}
+
+animateRing();
+
+/* CURSOR HOVER */
+
+document.querySelectorAll('a,button,.template-card,.step').forEach(el=>{
+
+  el.addEventListener('mouseenter', ()=>{
+
+    cursor.classList.add('hover');
+    ring.classList.add('hover');
+
+  });
+
+  el.addEventListener('mouseleave', ()=>{
+
+    cursor.classList.remove('hover');
+    ring.classList.remove('hover');
+
+  });
+
+});
+
+/* WHATSAPP */
+
+function sendWhatsApp(){
+
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const business = document.getElementById("business").value;
+  const notes = document.getElementById("notes").value;
+
+  const message =
+`Hello Bella Designs 👋
+
+I would like to order a website.
+
+👤 Name: ${name}
+📞 Phone: ${phone}
+🏪 Business: ${business}
+
+📝 Requirements:
+${notes}`;
+
+  const url =
+`https://wa.me/918122668602?text=${encodeURIComponent(message)}`;
+
+  window.open(url,"_blank");
+
+}
+
+/* IMAGE PREVIEW */
+
+const previewImages = document.querySelectorAll('.preview-img');
+
+const imageModal = document.getElementById('imageModal');
+const modalImage = document.getElementById('modalImage');
+const closeModal = document.getElementById('closeModal');
+
+previewImages.forEach(img => {
+
+  img.addEventListener('click', () => {
+
+    imageModal.classList.add('active');
+    modalImage.src = img.src;
+
+    document.body.style.overflow = 'hidden';
+
+  });
+
+});
+
+closeModal.addEventListener('click', () => {
+
+  imageModal.classList.remove('active');
+
+  document.body.style.overflow = 'auto';
+
+});
+
+imageModal.addEventListener('click', (e) => {
+
+  if(e.target === imageModal){
+
+    imageModal.classList.remove('active');
+
+    document.body.style.overflow = 'auto';
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
+```
 
 <style>
 
